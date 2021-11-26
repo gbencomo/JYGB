@@ -1,0 +1,89 @@
+Computer Vision Final Project Description
+11/12/2021
+
+This text file contains the final project description John Yang and I aim to implement in the coming 
+weeks for our COS429 final project. It follows Q2-Q7 posted on the COS429 gradescope.
+
+Q2.) DESCRIPTION OF THE PROBLEM
+
+The image classification of objects, through all of the various datasets and techniques, is arguable 
+the biggest theme of this course.  Object counting is an important relative of object classification,
+and is a task that carries applications in surveillance systems, traffic monitoring, ecological surveys,
+and cell counting.  As previously done in the image classification space, object counting has heavily
+relied on scale-invariant feature transforms (SIFT), histograms of oriented gradients (HOG), and 
+convolutional neural networks (CNNs).  The goal is the infer the number of people, cars, cells,
+ect. from an image/video.
+
+Q3.) POINTERS TO RELATED COURSE TOPICS
+
+Much of the previous literature for this specific problem has leveraged some of the most important
+topics covered in this course.  Previous studies have utilized SIFT, HOG, and convolutional
+neural networks (CNNs).  
+
+Q4.) PLANS FOR ACQUIRING THE NECESSARY DATA/COMPUTATIONAL RESOURCES
+
+We have created a list of 2D image datasets commonly used in object counting projects (below). 
+Each of the listed datasets is extremely well documented, and the data is readily available.
+We will not use every listed dataset for training and testing, but having a few backups is 
+important!
+
+Since Gianluca came from a biochemistry background, and has spent far too many hours counting
+cells by hand in the two years he spent in a wet lab, we will be focusing on the two cell
+counting datasets (VGG, MBM).
+
+We plan on training/testing on our laptops and using the following python libraries: pytorch, 
+numpy, matplotlib, time.  
+
+Datasets:
+    Crowdcounting: UCF_CC_50, Shanghaitech (standard datasets)
+    Cell Counting: VGG Cell dataset (main public benchmark), Modified Bone Marrow (MBM) dataset
+    Vehicle Counting: WebCamT and TRAN-COS
+    Animal Counting: Penguins from Areta et al.
+    Plant Counting: MTC
+ 
+
+Q5.) PLANS FOR QUANTITATIVE AND QUALITATIVE EVALUATION
+
+Consistent with previous object counting literature, we will be utilizing three quantitative metrics: 
+grid average mean absolute error (GAME), mean absolute error (MAE), and mean squared error (MSE).  
+
+Q6.) TARGET OUTCOME (DELIVERABLES)
+
+We plan to develop our own CNN that is competitive with existing literature.  We plan on utilizing
+heatmaps, which will also allow for object localization on top of counting.  In short, we will
+deliver:
+
+    - two fully trained CNNs for two cell counting datasets
+    - quantitative metrics for the performance of the CNNs on each dataset
+    - an analysis of our experimental outcomes, and the most optimized CNNs
+
+Q7.) FALLBACK PLACK (ROADBLOCKS, MINIMUM DELIVERY IF EXPLORATORY PARTS GO WRONG)
+
+We will be training first with RESNET18, to guarantee that we are not void of any results.  A full 
+analysis with our results from RESNET18 will be our minimum delivery.
+
+The main roadblock we expect is the "art" of CNN training.  There are quite literally a 1000 different
+novel things we can do as we try to optimize performance for object counting.  Our biggest worry is
+running out of time, which is why we are gathering baseline results with RESNET18 first!
+
+
+
+NOTES
+
+RESNET18 for image classification
+Explore others
+make my own
+
+Datasets:
+    Crowdcounting: UCF_CC_50, Shanghaitech (standard datasets)
+    Cell Counting: VGG Cell dataset (main public benchmark), Modified Bone Marrow (MBM) dataset
+    Vehicle Counting: WebCamT and TRAN-COS
+    Animal Counting: Penguins from Areta et al.
+    Plant Counting: MTC
+    
+A lot of previous work has been done in this field.  For crowd-counting, HOG-based models have been 
+important as well as CNN-based regressors.  Heatmap-based counting has also been used.  Cell 
+Counting has taken advantage of SIFT features and CNNs.  Vehicle counting has used SIFT, CNN, 
+heatmaps, and LSTMs.  
+
+
