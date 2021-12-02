@@ -18,4 +18,7 @@ mkdir -p ${OUTPUT_DIR}
 
 # copy both standard output and standard error streams to file while still 
 # being visible in the terminal.  Append if file already exists
-python scratch.py 2>&1 | tee -a ${OUTPUT_DIR}/log.txt
+python train.py \
+DATASET ${DATASET} \
+OUTPUT_DIR ${OUTPUT_DIR} \
+2>&1 | tee -a ${OUTPUT_DIR}/log.txt
