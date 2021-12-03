@@ -1,8 +1,9 @@
 import h5py
 import os
 import numpy as np
-import torch
+import torchvision
 from config import config as cfg
+from utils import shuffle
 
 data_path = {
     'vgg': 'data/VGG/VGG.hdf5',
@@ -60,9 +61,66 @@ class Dataset(object):
 
         mn = np.mean(imgs[ind[:self.train_num], ...], axis=(0, 1, 2))
         std = np.std(imgs[ind[:self.train_num], ...], axis=(0, 1, 2))
+        
+        # normalize training and test sets + mean center
         self.train = (imgs[ind[:self.train_num], ...] - mn) / \
             std, counts[ind[:self.train_num], ...]
         self.test = (imgs[ind[self.train_num:], ...] - mn) / \
             std, counts[ind[self.train_num:], ...]
+    
+    # TODO: remove batch size and epochs as input parameters?  Or handle
+    # them here? 
+    def preprocessing(self, training, augment, batch_size, num_epochs):
+        def _augment(D):
+            '''
+            private inner function that assumes the input dataset
+            contains both features and labels are included.
+            labels are in the last dimensions.
+            
+            example:
+
+            features.shape: (64, 256, 256, 3)
+            labels.shape: (64, 256, 256, 1)
+            D.shape: (64, 256, 256, 4)
+            
+            '''
+            if self.image_shape == (600, 600, 3):
+                final = 576
+                x_crop = np.random.randint(0, 24) 
+                y_crop = np.random.randint(0, 24) 
+                D = D[:,x_crop:(final+x_crop),y_crop:(final+y_crop),:]
+            elif self.image_shape == (152, 152, 3):
+                final = 144
+                x_crop = np.random.randint(0, 6)
+                y_crop = np.random.randint(0, 6)
+                D = D[:,x_crop:(final+x_crop),y_crop:(final+y_crop),:]
+            elif self.image_shape == (256, 256, 3):
+                final = 224
+                x_crop = np.random.randint(0, 32)
+                y_crop = np.random.randint(0, 32)
+                D = D[:,x_crop:(final+x_crop),y_crop:(final+y_crop),:]
+            else:
+                raise ValueError('Incorrect dataset')   
+            
+            for i in range(D.shape[0]):
+                r = np.random.randint(2)
+                D[i,:,:,:] = np.flip(D[i,:,:,:], axis=r)
+                r = np.random.randint(2)
+                D[i,:,:,:] = np.flip(D[i,:,:,:], axis=r)
+                
+            return D         
+
+        if training:
+            dataset = np.concatenate(self.train, axis=-1)
+        else:
+            dataset = np.concatenate(self.test, axis=-1)
+
+        if augment:
+            dataset = _augment(dataset)
+        dataset = shuffle(dataset) 
+        #dataset = np.tile(shuffle(dataset), num_epochs)
+        
+        return dataset[:, :, :, :3], dataset[:, :, :, 3:]
 
 
+ 
