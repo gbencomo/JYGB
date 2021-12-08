@@ -63,7 +63,7 @@ def train(  dataset: str,
     for mode in ['train', 'valid']:
         train = (mode == 'train')
         D[mode] = Dataset(dataset, seed, train, augment, val_percent)
-        dataloader[mode] = DataLoader(D[mode], batch_size=batch_size) # !!! add workers, shuffle, pin_memory???
+        dataloader[mode] = DataLoader(D[mode], batch_size=batch_size, shuffle=True) # !!! add workers, shuffle, pin_memory???
         
     # initialize network
     network = UNet(input_filters=3, filters=unet_filters, 
@@ -102,6 +102,7 @@ def train(  dataset: str,
         Epochs:          {epochs}
         Batch size:      {batch_size}
         Learning rate:   {learning_rate}
+        Weight decay:    {weight_decay}
         Training size:   {len(D['train'])}
         Validation size: {len(D['valid'])}
         Device:          {device.type}

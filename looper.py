@@ -68,8 +68,6 @@ class Looper():
             # calculate loss and update running loss
             result = result.squeeze()
             label = label.squeeze()
-            #print(result.shape)
-            #print(label.shape)
             loss = self.loss(result, label)
             self.running_loss[-1] += image.shape[0] * loss.item() / self.size
 
