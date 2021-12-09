@@ -14,6 +14,12 @@ image_shape = {
     'mbm': (600, 600, 3),
     'adi': (152, 152, 3), }
 
+train_num = {
+    'vgg': 64,
+    'dcc': 100,
+    'mbm': 15,
+    'adi': 50, }
+
 total_num = {
     'vgg': 200,
     'dcc': 176,
@@ -21,24 +27,22 @@ total_num = {
     'adi': 200, }
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, dataset: str, seed: int, train: bool, augment: bool, val_percent: float):
+    def __init__(self, dataset: str, seed: int, train: bool, augment: bool):
         super(Dataset, self).__init__()
         if dataset not in ['vgg', 'dcc', 'mbm', 'adi']:
             raise ValueError(f'Wrong dataset name: {dataset}')
-        self.h5 = h5py.File(data_path[dataset], 'r')
         self.seed = seed
         self.dataset = dataset
         self.image_shape = image_shape[dataset]
-        self.val_percent = val_percent
         
         np.random.seed(seed)
         inds = np.linspace(0, total_num[dataset] - 1, total_num[dataset]).astype('uint8')
-        val = np.delete(inds, np.random.choice(inds, int(total_num[dataset] * (1 - val_percent)), replace=False))
+        t = np.delete(inds, np.random.choice(inds, total_num[dataset] - train_num[dataset], replace=False))
         
         if train:
-            inds = np.setdiff1d(inds, val) 
+            inds = t
         else:
-            inds = val    
+            inds = np.setdiff1d(inds, t)
         
         with h5py.File(data_path[dataset], 'r') as hf:
             self.images = hf.get('imgs')[inds].astype('float32')
@@ -78,8 +82,7 @@ class Dataset(torch.utils.data.Dataset):
 
         np.random.seed(self.seed)
         inds = np.linspace(0, total_num[self.dataset] - 1, total_num[self.dataset]).astype('uint8')
-        val = np.delete(inds, np.random.choice(inds, int(total_num[self.dataset] * (1 - self.val_percent)), replace=False))
-        inds = np.setdiff1d(inds, val)
+        inds = np.delete(inds, np.random.choice(inds, total_num[self.dataset] - train_num[self.dataset], replace=False))
         
         with h5py.File(data_path[self.dataset], 'r') as hf:
             train_images = hf.get('imgs')[inds].astype('float32')

@@ -15,7 +15,7 @@ import time
         help='Dataset to train model on (HDF5).')
 @click.option('-lr', '--learning_rate', default=1e-3,
         help='Initial learning rate.')
-@click.option('-e', '--epochs', default=150, 
+@click.option('-e', '--epochs', default=180, 
         help='Number of training epochs.')
 @click.option('-b', '--batch_size', default=16,
         help='Batch size for both training and validation.')
@@ -32,8 +32,6 @@ import time
         help='Momentum.')
 @click.option('-s', '--seed', default=np.random.randint(10000),
         help='Seed for train/test split.')
-@click.option('-v', '--val_percent', default=0.2,
-        help='Percent allocation for the validation/test set.')
 @click.option('-sp', '--save_path', 
         required=True,
         help='Specify the save path to which models/results should be saved.')
@@ -49,7 +47,6 @@ def train(  dataset: str,
             convolutions: int,
             plot: bool,
             seed: int,
-            val_percent: float,
             save_path: str):
    
     START = time.time()
@@ -62,7 +59,7 @@ def train(  dataset: str,
     # Load train/test data 
     for mode in ['train', 'valid']:
         train = (mode == 'train')
-        D[mode] = Dataset(dataset, seed, train, augment, val_percent)
+        D[mode] = Dataset(dataset, seed, train, augment)
         dataloader[mode] = DataLoader(D[mode], batch_size=batch_size, shuffle=True) # !!! add workers, shuffle, pin_memory???
         
     # initialize network
@@ -81,7 +78,7 @@ def train(  dataset: str,
     #                weight_decay=weight_decay)
     lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer,
                     step_size=20,
-                    gamma=0.1)
+                    gamma=0.5)
 
     # if plot flag is on, create a live plot (to be updated by Looper)
     if plot:
@@ -125,7 +122,7 @@ def train(  dataset: str,
         if result < current_best:
             current_best = result
             torch.save(network.state_dict(), f'{save_path}/{dataset}_{seed}.pth')
-
+ 
             print(f"\nNew best result: {result}")
 
         print("\n", "-"*80, "\n", sep='')

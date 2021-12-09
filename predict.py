@@ -2,11 +2,7 @@ import click
 
 import torch
 import numpy as np
-import torchvision.transforms.functional as TF
 import matplotlib.pyplot as plt
-from matplotlib.figure import figaspect
-from PIL import Image
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 from data import Dataset
 from model import UNet
@@ -48,7 +44,7 @@ def predict(    dataset: str,
     
     seed = int(''.join(i for i in checkpoint.name if i.isdigit()))
 
-    D = Dataset(dataset, seed, train=False, augment=False, val_percent=0.2)
+    D = Dataset(dataset, seed, train=False, augment=False)
     
     img = torch.tensor(D[index][0]).unsqueeze(0)
     pred_map = network(img)
@@ -59,7 +55,8 @@ def predict(    dataset: str,
     print(f"The number of cells counted: {n_objects}")
     print(f'True number of cells: {n_true}')
     
-    img = D.images[index]
+    img = D.images[index] / 255.
+    
     true_map = D.labels[index]
     
     if visualize:
@@ -80,7 +77,7 @@ def _visualize(img, true_map, pred_map):
     ax[1].set_title("Predicted Density Map", fontsize=8)
     ax[1].axis('off')
 
-    im2 = ax[2].imshow(pred_map)
+    im2 = ax[2].imshow(true_map)
     ax[2].set_title("Groundtruth Density Map", fontsize=8)
     ax[2].axis('off')
 

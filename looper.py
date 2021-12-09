@@ -1,5 +1,4 @@
-from typing import Optional, List
-
+from typing import Optional
 import torch
 import numpy as np
 import matplotlib
@@ -65,9 +64,11 @@ class Looper():
             # get model prediction (a density map)
             result = self.network(image)
 
-            # calculate loss and update running loss
+            # decrease redundant dims
             result = result.squeeze()
             label = label.squeeze()
+
+            # calculate loss and update running loss 
             loss = self.loss(result, label)
             self.running_loss[-1] += image.shape[0] * loss.item() / self.size
 
@@ -79,8 +80,7 @@ class Looper():
             # loop over batch samples
             for true, predicted in zip(label, result):
                 # integrate a density map to get no. of objects
-                # note: density maps were normalized to 100 * no. of objects
-                #       to make network learn better
+                # we divide by 100 to recieve counts
                 true_counts = torch.sum(true).item() / 100
                 predicted_counts = torch.sum(predicted).item() / 100
                 
