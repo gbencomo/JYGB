@@ -89,3 +89,33 @@ Options:
 ```
 
 ### Examples
+
+```
+$ python predict.py -d vgg -c ./results/vgg_4023.pth --visualize                                    
+Predicted cell count: 222.306. True cell count: 223.0.
+```
+
+![](examples/vgg_random.png)
+
+```
+python predict.py -d mbm -c ./results/mbm_4015.pth --visualize
+Predicted cell count: 177.934. True cell count: 180.0.
+```
+
+![](examples/mbm_random.png)
+
+```
+python predict.py -d adi -c ./results/adi_1137.pth --visualize
+Predicted cell count: 128.678. True
+cell count: 132.0.
+```
+
+![](examples/adi_random.png)
+
+```
+python predict.py -d dcc -c ./results/dcc_7890.pth --visualize
+Predicted cell count: 66.145. True cell count: 65.0.
+```
+
+![](examples/dcc_random.png)
+
