@@ -32,9 +32,11 @@ def predict(    dataset: str,
                 unet_filters: int,
                 convolutions: int,
                 visualize: bool):
-    
+
+    # run on gpu if available    
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
+    # initialize network as it was turning training run
     network = UNet(input_filters=3,
                     filters=unet_filters,
                     N=convolutions).to(device)
@@ -42,31 +44,35 @@ def predict(    dataset: str,
     network.load_state_dict(torch.load(checkpoint.name))
     network.eval()
     
+    # the seed determines the test-train split.  pull the seed from the file name
     seed = int(''.join(i for i in checkpoint.name if i.isdigit()))
 
+    # pull test data using the seed
     D = Dataset(dataset, seed, train=False, augment=False)
     
+    # get image from test, predict
     img = torch.tensor(D[index][0]).unsqueeze(0)
     pred_map = network(img)
     
+    # calculate cell counts for pred and true
     n_objects = torch.sum(pred_map).item() / 100
     n_true = np.sum(D[index][1]) / 100
     
     print(f"The number of cells counted: {n_objects}")
     print(f'True number of cells: {n_true}')
     
+    # pull raw image
     img = D.images[index] / 255.
     
+    # pull ground truth label
     true_map = D.labels[index]
     
     if visualize:
         _visualize(img, true_map, pred_map.squeeze().cpu().detach().numpy().transpose())
 
 def _visualize(img, true_map, pred_map):
-    """Draw a density map onto the image."""
-    # keep the same aspect ratio as an input image
-    #fig, ax = plt.subplots(figsize=figaspect(1.0 * img.shape[1] / img.shape[0]))
-    #fig.subplots_adjust(0, 0, 1, 1)
+    """Plot the raw image, the predicted density map, and the ground truth density map."""
+    
     fig, ax = plt.subplots(1, 3)
 
     im0 = ax[0].imshow(img)
@@ -81,12 +87,6 @@ def _visualize(img, true_map, pred_map):
     ax[2].set_title("Groundtruth Density Map", fontsize=8)
     ax[2].axis('off')
 
-    # create an axes on the right side of ax. The width of cax will be 5%
-    # of ax and the padding between cax and ax will be fixed at 0.05 inch.
-    #divider = make_axes_locatable(ax[2])
-    #cax = divider.append_axes("right", size="5%", pad=0.05)
-    #plt.colorbar(im2, cax=cax)
-  
     fig.tight_layout()
     
     plt.show()
