@@ -25,10 +25,67 @@ Original Datasets:
 
 From the root folder, run
 ```
-bash run.sh [2D_dataset]
+bash run.sh [dataset]
 ```
 For example, the following code will run on `vgg` dataset. 
 ```
 bash run.sh vgg
 ```
-Each time the training and test set will be randomly split by a random seed appended in the output folder. The model and training logs can both be located in the output folder.
+Each time the training and test set will be randomly split by a random seed appended in the output folder. The model and training logs can both be located in the output folder. Training configurations can be changed in `run.sh` or by passing different arguments when runing `python train.py` directly.
+```
+Usage: train.py [OPTIONS]
+
+Options:
+  -d, --dataset [vgg|mbm|dcc|adi]
+                                  Dataset to train model on (HDF5).
+                                  [required]
+
+  -lr, --learning_rate FLOAT      Initial learning rate.
+  -e, --epochs INTEGER            Number of training epochs.
+  -b, --batch_size INTEGER        Batch size for both training and validation.
+  -a, --augment                   Augment training data.
+  -uf, --unet_filters INTEGER     Number of filters for U-Net convolutional
+                                  layers.
+
+  -c, --convolutions INTEGER      Number of layers in a convolutional block.
+  -p, --plot                      Generate a live plot.
+  -wd, --weight_decay FLOAT       Weight decay.
+  -m, --momentum FLOAT            Momentum.
+  -o, --optim TEXT                Optimizer for training (Options: AdamW,
+                                  RMSprop, SDG).
+
+  -s, --seed INTEGER              Seed for train/test split.
+  -sc, --scheduler TEXT           Learning rate scheduler.
+  -l, --loss_function TEXT        Loss function to use.
+  -sp, --save_path TEXT           Specify the save path to which
+                                  models/results should be saved.  [required]
+
+  --help                          Show this message and exit.
+```
+
+## Predictions
+
+The `predict.py` script is provided to run a trained model on any given input image.
+
+```
+Usage: predict.py [OPTIONS]
+
+Options:
+  -d, --dataset [vgg|mbm|dcc|adi]
+                                  Dataset to pull image from (HDF5).
+                                  [required]
+
+  -i, --index INTEGER             Image index to visualize.
+  -c, --checkpoint FILENAME       A path to a checkpoint with weights.
+                                  [required]
+
+  -u, --unet_filters INTEGER      Number of filters for U-Net convolutional
+                                  layers.
+
+  -co, --convolutions INTEGER     Number of layers in a convolutional block.
+  -v, --visualize                 Visualize predicted density map.
+  --help                          Show this message and exit.
+
+```
+
+### Examples
