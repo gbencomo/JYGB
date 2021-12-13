@@ -2,7 +2,6 @@
 # "unofficial bash strict mode"
 set -euo pipefail
 IFS=$'\n\t'
-set -e
 
 # Specify dataset, first argument
 DATASET=${1:-1}
