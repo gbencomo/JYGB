@@ -106,8 +106,7 @@ Predicted cell count: 177.934. True cell count: 180.0.
 
 ```
 python predict.py -d adi -c ./results/adi_1137.pth --visualize
-Predicted cell count: 128.678. True
-cell count: 132.0.
+Predicted cell count: 128.678. True cell count: 132.0.
 ```
 
 ![](examples/adi_random.png)
